@@ -59,5 +59,5 @@ private extension ArtistService {
 
 }
 
-let artistRequest = URLRequest(url: URL(string: "https://untheological-adver.000webhostapp.com/artists_list.json")!)
-let artistDetailsRequest = URLRequest(url: URL(string: "https://untheological-adver.000webhostapp.com/detail.json")!)
+let artistRequest = URLRequest(url: URL(string: "https://api.myjson.com/bins/8u27t")!)
+let artistDetailsRequest = URLRequest(url: URL(string: "https://api.myjson.com/bins/to8e1")!)
