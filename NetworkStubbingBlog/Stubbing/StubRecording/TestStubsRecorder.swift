@@ -1,7 +1,6 @@
 import Foundation
 import UIKit
 
-typealias NetworkResponse = (data: Data?, response: URLResponse?, error: Error?)
 typealias CompletionBlock = (Data?, URLResponse?, Error?) -> Void
 
 final class TestStubsRecorder {
@@ -11,30 +10,28 @@ final class TestStubsRecorder {
     private let fileManager = FileManager.default
     
     func recordResult(of request: URLRequest, with completionHandler: @escaping CompletionBlock) -> CompletionBlock {
-        
-        func completionWrapper(networkResponse: NetworkResponse) {
+
+        let completionWrapper: (Data?, URLResponse?, Error?) -> Void = { data, response, error in
             do {
-                try record(networkResponse: networkResponse, for: request)
-                
+                try self.record(data, response, error, for: request)
             } catch {
                 print("TestStubsRecorder error: \(error)")
             }
-            completionHandler(networkResponse.data, networkResponse.response, networkResponse.error)
+            completionHandler(data, response, error)
         }
-        
         return completionWrapper
     }
     
-    private func record(networkResponse: NetworkResponse, for request: URLRequest) throws {
+    private func record(_ data: Data?, _ response: URLResponse?, _ error: Error?, for request: URLRequest) throws {
         guard let testName = environment[.stubbedTestName] else {
             throw  TestStubsRecorderError.noStubbedTestName
         }
         
-        guard networkResponse.error == nil else {
-            throw  TestStubsRecorderError.networkError(networkResponse.error!)
+        guard error == nil else {
+            throw  TestStubsRecorderError.networkError(error!)
         }
         
-        guard let data = networkResponse.data else {
+        guard let data = data else {
             throw  TestStubsRecorderError.invalidResponseData
         }
         
